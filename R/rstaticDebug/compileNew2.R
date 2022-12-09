@@ -78,7 +78,7 @@ function(k, update = FALSE)
     privMethodsCode[[length(classDefs) + 1L]] = mkMethodsCode(k, inh, className = "", bindEnv = "private_bind_env")$code
 
 
-    activeBindings = mkActiveBindingCode(classDefs, k)
+    activeBindings = mkActiveBindingCode(if(length(classDefs)) c(classDefs, k) else structure(list(k), names = ""))
     
     
     end = quote({
@@ -227,7 +227,77 @@ function(k, inherited = character(), what = "public_methods",
 }
 
 
+mkActiveBindingCode =
+    #
+    #  Create a variable for each function for 
+    #
+function(cdefs)    
+{
+#    browser()
+    code = list()
+    ids = character()
+    vars = character()
 
+    rhs = quote(list())    
+
+    for(i in seq(along.with = cdefs)) {
+        k = cdefs[[i]]
+        act =  k$active
+
+        class = names(cdefs)[i]
+        if(class != "")
+            class = paste0(class, ".")
+        
+        if(class == "") {
+            enclosEnv = as.name("enclos_env")
+            bindEnv = as.name("public_bind_env")
+        } else {
+            enclosEnv = as.name(paste0(class, "super_enclos_env"))
+            bindEnv = as.name(paste0(class, "super_bind_env"))
+        }
+        
+        if(length(act) > 0) {
+            vars = c(vars, paste0(class, names(act)))
+
+            for( v in names(act)) {
+
+                varName = as.name(paste0(class, v))
+                tmp = substitute({
+                    var = fun
+                    environment(var) = enclosEnv
+                    makeActiveBinding(id, var, bindEnv)
+                }, list(fun = act[[v]],
+                        var = varName,
+                        enclosEnv = enclosEnv,
+                        bindEnv = bindEnv,
+                        id = v))
+
+                code = c(code, as.list(tmp)[-1])
+
+                j = length(rhs) + 1L
+                rhs[[ j ]] = varName
+                names(rhs)[j] = v
+            }
+
+        }
+
+#browser()        
+#        ids = c(ids, names(act))
+
+        if(length(rhs) > 1) {
+#            idx = seq(along.with = ids) + length(rhs) # 1L
+#            rhs[idx] = lapply(vars, as.name)
+#            names(rhs)[ idx ] = ids
+        
+            ex = substitute( enclosEnv$.__active__ <- els,
+                        list(enclosEnv = enclosEnv,
+                             els = rhs))
+            code = c(code, ex)
+        }
+    }
+
+    code
+}
 
 
 # From R6
