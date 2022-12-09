@@ -1,6 +1,6 @@
 mkNew =
     # k is the R6 class object, e.g.  ArgumentList, i.e. the R6ClassGenerator.
-function(k)
+function(k, update = FALSE)
 {
 
     classDefs = list()
@@ -93,8 +93,11 @@ function(k)
 
     new = function(...) {}    
     body(new)[1L + seq(along.with = b)] = b
+
+    if(update)
+        k$new = new
     
-    new    
+    invisible(new)
 }
 
 
@@ -120,6 +123,9 @@ function(className, hasPriv)
 mkSuperChainCode =
 function(classNames)
 {
+    if(length(classNames) < 2)
+        return(list())
+    
     ans = vector("list", length(classNames))
     tmp = quote( x$super <- val )
     for(i in seq(along.with = classNames)[-1]) {
