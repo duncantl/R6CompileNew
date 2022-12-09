@@ -76,6 +76,9 @@ function(k, update = FALSE)
         privMethodsCode[[def$classname]] = o$code
     }
     privMethodsCode[[length(classDefs) + 1L]] = mkMethodsCode(k, inh, className = "", bindEnv = "private_bind_env")$code
+
+
+    activeBindings = mkActiveBindingCode(classDefs, k)
     
     
     end = quote({
@@ -103,6 +106,7 @@ function(k, update = FALSE)
           supChainDef,
           unlist(pubMethodsCode, recursive = FALSE),
           unlist(privMethodsCode, recursive = FALSE),
+          activeBindings,
           as.list(end)[-1])
 
     new = function(...) {}    
@@ -198,16 +202,16 @@ function(k, inherited = character(), what = "public_methods",
                                           val = as.name(paste(names(ids), ids, sep = "."))))
 
     } else {
-    
-        tmp = substitute(structure(vars, names = ids), list(ids = unname(ids)))
-    
+        
         ex = quote(list())
         if(any(inh))
             methodVars = c(methodVars, lapply(paste(names(inherited)[inh], inherited[inh], sep = "."), as.name))
         ex[ seq(along.with = methodVars) + 1L] = methodVars
-        tmp[[2]] = ex
+        # use c(a = fun, b = fun) rather than structure(c(fun, fun), names = c("a", "b"))
+        # as the former is about 3.14 times faster.
+        names(ex)[seq(along.with = ids) + 1L] = ids
 
-        e = substitute(list2env( xxx, envir = e), list(xxx = tmp, e = env))
+        e = substitute(list2env( xxx, envir = e), list(xxx = ex, e = env))
     }
 
     code = c(code1, e)    
@@ -221,6 +225,8 @@ function(k, inherited = character(), what = "public_methods",
     
     list(code = code, inherited = inherited2)
 }
+
+
 
 
 
