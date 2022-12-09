@@ -53,8 +53,20 @@ function(k, update = FALSE)
         inh = o$inherited
         pubMethodsCode[[def$classname]] = o$code
     }
-    pubMethodsCode[[length(classDefs) + 1L]] = mkMethodsCode(k, inh, className = "", bindEnv = "public_bind_env")$code
+    tmp = mkMethodsCode(k, inh, className = "", bindEnv = "public_bind_env")
 
+    w = ("initialize" == tmp$inherited)
+    
+    initialize = if(!any(w))
+                     NULL
+                 else if(names(tmp$inherited)[w] != k$classname)
+                        as.name(paste0(names(tmp$inherited)[w], ".initialize"))
+                 else
+                     as.name("initialize")
+    pubMethodsCode[[length(classDefs) + 1L]] = tmp$code
+
+
+    
 # repeating the code from above for now.    
     privMethodsCode = list()
     inh = character()
@@ -66,9 +78,6 @@ function(k, update = FALSE)
     privMethodsCode[[length(classDefs) + 1L]] = mkMethodsCode(k, inh, className = "", bindEnv = "private_bind_env")$code
     
     
-
-    
-
     end = quote({
                   enclos_env$super <- Container.super_bind_env
                   public_bind_env$.__enclos_env__ <- enclos_env
@@ -82,6 +91,11 @@ function(k, update = FALSE)
     end[[4]][[3]] = classNames
     end[[2]][[3]] = as.name(paste0(classNames[2], ".super_bind_env"))
 
+    if(is.null(initialize))
+        end = end[-5]
+    else    
+        end[[5]][[1]] = initialize
+    
 
     b = c(as.list(envs)[-1],
           as.list(flds)[-1],
