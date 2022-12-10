@@ -325,7 +325,7 @@ function(els, env = "public_bind_env")
 
 
 
-# From R6
+# From R6 package.
 recursive_merge <-
 function(obj, which) 
 {
