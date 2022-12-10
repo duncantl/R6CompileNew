@@ -102,6 +102,8 @@ function(k, update = FALSE)
 
     b = c(as.list(envs)[-1],
           as.list(flds)[-1],
+          setFieldsCode(public_fields),
+          setFieldsCode(private_fields, "private_bind_env"),          
           unlist(supEnvs, recursive = FALSE),
           supChainDef,
           unlist(pubMethodsCode, recursive = FALSE),
@@ -211,7 +213,9 @@ function(k, inherited = character(), what = "public_methods",
         # as the former is about 3.14 times faster.
         names(ex)[seq(along.with = ids) + 1L] = ids
 
-        e = substitute(list2env( xxx, envir = e), list(xxx = ex, e = env))
+#        browser()
+        e = lapply(names(ex)[-1], function(x) substitute( e$v <- val, list(e = env, v = as.name(x), val = ex[[x]])))
+#        e = substitute(list2env( xxx, envir = e), list(xxx = ex, e = env))
     }
 
     code = c(code1, e)    
@@ -255,6 +259,12 @@ function(cdefs)
             enclosEnv = as.name(paste0(class, "super_enclos_env"))
             bindEnv = as.name(paste0(class, "super_bind_env"))
         }
+
+        # add bindings in this super_bind_env for the inherited bindings from earlier classes
+        code = c(code, mapply(function(id, var)
+                                 substitute(makeActiveBinding(id, var, env), list(id = id, var = var, env = bindEnv))
+                               , names(rhs[-1]), rhs[-1]))
+
         
         if(length(act) > 0) {
             vars = c(vars, paste0(class, names(act)))
@@ -298,6 +308,21 @@ function(cdefs)
 
     code
 }
+
+
+setFieldsCode =
+function(els, env = "public_bind_env")    
+{
+    if(length(els) == 0)
+        return(NULL)
+
+    env = as.name(env)
+    
+    mapply(function(id, val)
+             substitute(env$id <- val, list(env = env, id = id, val = val)),
+           names(els), els)
+}
+
 
 
 # From R6
