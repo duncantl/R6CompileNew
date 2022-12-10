@@ -1,0 +1,11 @@
+Package: R6CompileNew
+Version: 0.1-0
+Title: Generate Faster R6-Class-Specific Constructor Functions
+Description: This replaces the generic new() function for an R6
+  class with class-specific code that avoids querying the class
+  definition in each call to the constructor function.
+  This currently makes the functions about 4 times faster.
+Author: Duncan Temple Lang <duncan@r-project.org>
+Maintainer: Duncan Temple Lang <duncan@r-project.org>
+License: MIT + file LICENSE
+FirstCreated: Dec, 1, 2022
