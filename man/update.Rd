@@ -4,13 +4,13 @@
 \description{
 }
 \usage{
-update(fun = updateNew, ..., namespace = "rstatic")
+update(namespace, fun = mkNew, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{namespace}{the name of the package or namespace, or the environment itself.}  
   \item{fun}{the function to apply to each R6 class in the namespace.}
   \item{\dots}{additional arguments passed in each call to \code{fun}.}
-  \item{namespace}{the name of the package or namespace, or the environment itself.}
 }
 \value{
   A list with an element for each R6 class in the namespace.

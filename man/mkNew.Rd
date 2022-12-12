@@ -7,7 +7,7 @@
   an instance of this R6 class and invoke its initialize method.
 }
 \usage{
-mkNew(k, update = FALSE)
+mkNew(k, update = TRUE)
 }
 \arguments{
   \item{k}{the \link[R6]{R6ClassGenerator} object describing the R6 class,
