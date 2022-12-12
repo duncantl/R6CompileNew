@@ -1,4 +1,4 @@
-update =
+updateR6 =
     #
     # apply fun to each of the R6ClassGenerator objects
     # The intention is to "compile" methods for these classes
@@ -9,15 +9,18 @@ update =
     # for each class that has the information about the specific public and private methods, the active bindings,
     #  the inheritance structure and from which classes the methods come.
     #
-function(fun = updateNew, ..., namespace = "rstatic")    
+function(namespace = "rstatic", fun = mkNew, ...)    
 {
-    ns = getNamespace(namespace)
+    ns = if(is.environment(namespace))
+             namespace
+         else
+             getNamespace(namespace)
+    
     els = as.list.environment(ns, TRUE)
     w = sapply(els, is, "R6ClassGenerator")
     klasses = lapply(names(ns)[w], function(x) get(x, ns))
     names(klasses) = names(ns)[w]
-#    inh = !sapply(klasses, function(x) is.null(x$inherit))
-    # c("SCCHelper", "Stack", "ASTNode", "Counter")
-    invisible(lapply(names(klasses), function(x, ...) { fun(get(x, ns), ...)}, ...))
+
+    invisible(structure(lapply(names(klasses), function(x, ...) { fun(get(x, ns), ...)}, ...), names = names(klasses)))
 }
 

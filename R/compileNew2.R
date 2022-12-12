@@ -1,6 +1,8 @@
 mkNew =
     # k is the R6 class object, e.g.  ArgumentList, i.e. the R6ClassGenerator.
-function(k, update = FALSE)
+    #
+    #
+function(k, update = TRUE)
 {
 
     classDefs = list()

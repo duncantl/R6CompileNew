@@ -1,4 +1,4 @@
-export(update)
+export(updateR6)
 export(mkNew)
 
 
