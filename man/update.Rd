@@ -2,9 +2,13 @@
 \alias{updateR6}
 \title{Update all R6 Class Definitions in a Package}
 \description{
+  This finds all the R6 class (generator) objects in a
+  namespace, environment or list and applies the specified function
+  to each. This can update the class definition, replacing
+  implementations of methods, tracing methods, etc.
 }
 \usage{
-update(namespace, fun = mkNew, ...)
+updateR6(namespace, fun = mkNew, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

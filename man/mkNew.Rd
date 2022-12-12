@@ -10,8 +10,8 @@
 mkNew(k, update = TRUE)
 }
 \arguments{
-  \item{k}{the \link[R6]{R6ClassGenerator} object describing the R6 class,
-    created via a call to \link[R6]{R6Class}.}
+  \item{k}{the \code{R6ClassGenerator} object describing the R6 class,
+    created via a call to \code{\link[R6]{R6Class}}.}
   \item{update}{a logical value which, if \code{TRUE}, will insert
     the newly created \code{new} function directly into the R6 class
     for immediate use.
@@ -20,7 +20,7 @@ mkNew(k, update = TRUE)
 \value{
   A function.
 }
-\references{}
+%\references{}
 \author{
 Duncan Temple Lang <duncan@r-project.org>
 }
