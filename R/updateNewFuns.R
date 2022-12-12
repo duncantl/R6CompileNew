@@ -9,18 +9,27 @@ updateR6 =
     # for each class that has the information about the specific public and private methods, the active bindings,
     #  the inheritance structure and from which classes the methods come.
     #
-function(namespace = "rstatic", fun = mkNew, ...)    
+function(namespace, fun = mkNew, ...)    
 {
-    ns = if(is.environment(namespace))
-             namespace
-         else
-             getNamespace(namespace)
+
+    if(is.environment(namespace))
+        ns = namespace
+    else if(is.character(namespace))
+        ns = getNamespace(namespace)
+
+    if(is.environment(ns))
+        els = as.list.environment(ns, TRUE)
+    else
+        els = ns
     
-    els = as.list.environment(ns, TRUE)
-    w = sapply(els, is, "R6ClassGenerator")
+    w = sapply(els, inherits, "R6ClassGenerator")
     klasses = lapply(names(ns)[w], function(x) get(x, ns))
     names(klasses) = names(ns)[w]
 
-    invisible(structure(lapply(names(klasses), function(x, ...) { fun(get(x, ns), ...)}, ...), names = names(klasses)))
+    invisible(structure(lapply(names(klasses),
+                               function(x, ...) {
+                                   fun(get(x, ns), ...)
+                               }, ...),
+                        names = names(klasses)))
 }
 
