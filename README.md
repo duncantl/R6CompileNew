@@ -22,7 +22,7 @@ One issue with R6 is that the `new()` constructor function for a class is the sa
 It doesn't leverage knowledge of the class definition, but queries it.  This clearly
 involves querying the same information in each call to the new() function for a given class.
 
-Querying the class definition(s) can be done once.  The `mkNew() function in this package takes an R6 class
+Querying the class definition(s) can be done once.  The `mkNew()` function in this package takes an R6 class
 definition  (and those of its super-classes) and creates/"compiles" a specialized `new()` 
 function for that class. The `updateR6()` function can apply `mkNew()` (or other functions) on all
 R6 classes in a package, environment or list.
