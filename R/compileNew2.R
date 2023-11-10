@@ -4,7 +4,6 @@ mkNew =
     #
 function(k, update = TRUE)
 {
-
     classDefs = list()
     tmp = k$get_inherit()
     while(length(tmp)) {
